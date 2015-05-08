@@ -3,17 +3,17 @@ var tessel = require('tessel');
 var camera = require('camera-vc0706').use(tessel.port['A']);
 var servolib = require('servo-pca9685');
 
-var server = http.createServer(function(req, res){
-    res.writeHead( 200, {'Content-Type': 'text/plain'} );
-    res.end('Hello World!\n');
-}).listen(1337);
+//
+//var server = http.createServer(function(req, res){
+//    res.writeHead( 200, {'Content-Type': 'text/plain'} );
+//    res.end('Hello World!\n');
+//}).listen(1337);
 
 
 var servo = servolib.use(tessel.port['C']);
 
 var servo1 = 1; // We have a servo plugged in at position 1
 var position = 0;
-
 
 
 
