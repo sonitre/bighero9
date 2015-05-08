@@ -3,6 +3,7 @@ var app = angular.module('TesselApp', []);
 
 app.controller('MainCtrl', function($scope, $http){
 
+    $scope.className = ['front', 'left', 'right', 'back', 'top', 'bottom'];
     $scope.pics = '';
 
     $scope.getPics = function(){

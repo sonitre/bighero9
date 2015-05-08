@@ -10,6 +10,8 @@
   "author": "robbie, sang, evan, ming, sonia",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.12.3"
+    "express": "^4.12.3",
+    "filewatcher": "^2.2.0",
+    "watch": "^0.16.0"
   }
 }

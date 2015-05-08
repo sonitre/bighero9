@@ -4,6 +4,8 @@ var path = require('path');
 var fs = require('fs');
 
 
+
+
 var picPath = path.join(__dirname,'../pics');
 var indexHtmlPath = path.join(__dirname, '../index.html')
 var bowerPath = path.join(__dirname, '../bower_components');
@@ -18,12 +20,12 @@ app.use(express.static(browserPath));
 
 app.get('/', function(req, res, next){
 
-
         res.sendFile(indexHtmlPath);
 
 });
 
 app.get('/pics', function(req, res, next){
+
     fs.readdir('../pics', function(err, contents) {
         res.send(contents);
     });

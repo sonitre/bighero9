@@ -3,13 +3,6 @@ var tessel = require('tessel');
 var camera = require('camera-vc0706').use(tessel.port['A']);
 var servolib = require('servo-pca9685');
 
-//
-//var server = http.createServer(function(req, res){
-//    res.writeHead( 200, {'Content-Type': 'text/plain'} );
-//    res.end('Hello World!\n');
-//}).listen(1337);
-
-
 var servo = servolib.use(tessel.port['C']);
 
 var servo1 = 1; // We have a servo plugged in at position 1
@@ -31,15 +24,12 @@ camera.on('ready', function(){
 var count = 0;
 
 
-
-
-
 camera.on('error', function(err) {
     console.error(err);
 });
 
 var snapShot = function(){
-    if(count >= 7){
+    if(count >= 6){
         clearInterval(interval);
         camera.disable();
     }
