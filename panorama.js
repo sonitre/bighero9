@@ -2,59 +2,50 @@ var http = require('http');
 var server = http.createServer();
 var tessel = require('tessel');
 var camera = require('camera-vc0706').use(tessel.port['A']);
+var servolib = require('servo-pca9685');
 
-var notificationLED = tessel.led[3]; // Set up an LED to notify when we're taking a picture
-var count = 0;
+var servo = servolib.use(tessel.port['C']);
 
-// Wait for the camera module to say it's ready
-//camera.on('ready', function() {
-//    notificationLED.high();
-//
+var servo1 = 1; // We have a servo plugged in at position 1
+
+servo.on('ready', function () {
+    var position = 0;  //  Target position of the servo between 0 (min) and 1 (max).
+    camera.on('ready', function() {
+        //notificationLED.high();
+        // Take the picture
+
+        var interval = setInterval(snapShot,500);
+
+
+    });
+    //  Set the minimum and maximum duty cycle for servo 1.
+    //  If the servo doesn't move to its full extent or stalls out
+    //  and gets hot, try tuning these values (0.05 and 0.12).
+    //  Moving them towards each other = less movement range
+    //  Moving them apart = more range, more likely to stall and burn out
+    //servo.configure(servo1, 0.05, 0.4, function () {
+    //    setInterval(function () {
+    //        console.log('Position (in range 0-1):', position);
+    //        //  Set servo #1 to position pos.
+    //        servo.move(servo1, position);
+    //
+    //        // Increment by 10% (~18 deg for a normal servo)
+    //        position += 0.2;
+    //        if (position > 1) {
+    //            position = 0; // Reset servo position
+    //        }
+    //    }, 500); // Every 500 milliseconds
+});
+
+
 //    //server.listen(1337, function () {
 //    //    console.log('Server listening!');
 //    //});
 //
-//    // Take the picture
-//    while(count < 10){
-//        setInterval(function(){
-//        console.log(count);
-//            camera.takePicture(function(err, image) {
-//                if (err) {
-//                    console.log('error taking image', err);
-//                } else {
-//
-//                    notificationLED.low();
-//                    // Name the image
-//                    var name = 'picture-' + Math.floor(Date.now()*1000) + '.jpg';
-//                    // Save the image
-//                    console.log('Picture saving as', name, '...');
-//                    process.sendfile(name, image);
-//                    console.log('done.');
-//                    count++;
-//                }
-//            });
-//
-//        }, 1000);
-//    }
-//
-//
-//});
 var count = 0;
 
 
-camera.on('ready', function() {
-    if(count < 3){
-        notificationLED.high();
-        // Take the picture
 
-        interval = setInterval(snapShot,500);
-        var stopInterval = function(){
-            console.log('made it');
-            clearInterval(interval);
-        }
-    }
-
-});
 
 
 camera.on('error', function(err) {
@@ -62,32 +53,34 @@ camera.on('error', function(err) {
 });
 
 var snapShot = function(){
-    if(count >= 3){
-        console.log('in hereee')
-        stopInterval();
-
+    if(count >= 7){
+        clearInterval(interval);
        camera.disable();
-        camera.takePicture = function(){'no photo for you!'};
     }
     else {
+        count++;
         camera.takePicture(function(err, image) {
             if (err) {
                 console.log('error taking image', err);
             } else {
+                servo.configure(servo1, 0.05, 0.4, function () {
+                    servo.move(servo1, position);
+                    position += 0.1;
+                            if (position > 1) {
+                                position = 0; // Reset servo position
+                            }
+                });
                 console.log(count);
-                notificationLED.low();
+                //notificationLED.low();
                 // Name the image
                 var name = 'picture-' + Date.now() + '.jpg';
                 // Save the image
                 console.log('Picture saving as', name, '...');
                 process.sendfile(name, image);
                 console.log('done.');
-                count++;
+
             }
         });
     }
 }
 
-camera.on('error', function(err) {
-    console.error(err);
-});
